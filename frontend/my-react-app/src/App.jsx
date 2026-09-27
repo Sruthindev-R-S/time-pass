@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import './App.css'
 
-const websocketUrl = import.meta.env.VITE_AUDIO_RELAY_URL || 'ws://192.168.29.216:3000/audio'
+const websocketUrl = import.meta.env.VITE_AUDIO_RELAY_URL || 'wss://time-pass-3khn.onrender.com/audio'
 
 function App() {
   const [status, setStatus] = useState('Idle')
