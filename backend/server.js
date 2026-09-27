@@ -3,7 +3,7 @@ const express = require('express')
 const { WebSocket, WebSocketServer } = require('ws')
 
 const port = Number(process.env.PORT || 3000)
-const audioSourceUrl = process.env.AUDIO_SOURCE_URL || 'ws://127.0.0.1:8080'
+const audioSourceUrl = process.env.AUDIO_SOURCE_URL || ''
 const allowedOrigin = process.env.ALLOWED_ORIGIN || '*'
 
 const app = express()
@@ -35,6 +35,11 @@ function broadcastAudio(chunk) {
 }
 
 function connectToAudioSource() {
+  if (!audioSourceUrl) {
+    console.log('AUDIO_SOURCE_URL is not configured; relay is waiting for an audio source')
+    return
+  }
+
   if (audioSource && audioSource.readyState !== WebSocket.CLOSED) {
     return
   }
@@ -95,7 +100,7 @@ webSocketServer.on('connection', (client) => {
 server.listen(port, '0.0.0.0', () => {
   console.log(`Audio relay listening on port ${port}`)
   console.log(`WebSocket endpoint: ws://0.0.0.0:${port}/audio`)
-  console.log(`Audio source: ${audioSourceUrl}`)
+  console.log(`Audio source: ${audioSourceUrl || 'not configured'}`)
   connectToAudioSource()
 })
 
