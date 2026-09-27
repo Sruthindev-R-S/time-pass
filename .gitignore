@@ -1,0 +1,12 @@
+# Local C++ audio engine and build output
+/engine/
+/build/
+/recording.wav
+
+# Backend dependencies and local environment
+/backend/node_modules/
+/backend/.env
+
+# Frontend dependencies and build output
+/frontend/my-react-app/node_modules/
+/frontend/my-react-app/dist/

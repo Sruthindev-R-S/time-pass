@@ -1,0 +1,237 @@
+.receiver-shell {
+  min-height: 100vh;
+  background: #f4f0e8;
+  color: #18211f;
+}
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px 6vw;
+  border-bottom: 1px solid #d6d0c3;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.14em;
+}
+
+.eyebrow {
+  color: #718079;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #68766e;
+}
+
+.status-connected {
+  color: #13795b;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.hero-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.8fr);
+  min-height: 570px;
+  padding: 7vw 9vw 5vw;
+  overflow: hidden;
+  position: relative;
+}
+
+.hero-copy {
+  align-self: center;
+  position: relative;
+  z-index: 1;
+  max-width: 650px;
+}
+
+.kicker {
+  color: #d15a35;
+  font-family: var(--mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  margin: 0 0 30px;
+}
+
+h1 {
+  color: #18211f;
+  font-family: var(--heading);
+  font-size: clamp(56px, 8vw, 116px);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 0.88;
+  margin: 0;
+}
+
+h1 em {
+  color: #13795b;
+  font-style: normal;
+}
+
+.lede {
+  color: #68766e;
+  font-size: 17px;
+  line-height: 1.55;
+  margin: 32px 0;
+  max-width: 340px;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+button {
+  cursor: pointer;
+  font: inherit;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.primary-button, .secondary-button {
+  border: 0;
+  padding: 13px 18px;
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.03em;
+}
+
+.primary-button {
+  background: #18211f;
+  color: #f4f0e8;
+}
+
+.primary-button:hover:not(:disabled) {
+  background: #13795b;
+}
+
+.button-mark {
+  color: #ef744b;
+  font-size: 18px;
+  margin-right: 8px;
+  vertical-align: -1px;
+}
+
+.secondary-button {
+  background: transparent;
+  border: 1px solid #bdb7aa;
+  color: #68766e;
+}
+
+.signal-art {
+  align-self: center;
+  justify-self: center;
+  height: min(42vw, 440px);
+  position: relative;
+  width: min(42vw, 440px);
+}
+
+.signal-ring {
+  border: 1px solid #c7bfae;
+  border-radius: 50%;
+  inset: 10%;
+  position: absolute;
+}
+
+.ring-two { inset: 25%; }
+.ring-three { inset: 39%; border-color: #d15a35; }
+
+.signal-core {
+  align-items: center;
+  background: #13795b;
+  border-radius: 50%;
+  display: flex;
+  height: 30%;
+  justify-content: center;
+  left: 35%;
+  position: absolute;
+  top: 35%;
+  width: 30%;
+  box-shadow: 0 0 0 14px rgba(19, 121, 91, 0.1), 0 0 0 28px rgba(19, 121, 91, 0.06);
+}
+
+.signal-core span {
+  background: #ef744b;
+  border-radius: 50%;
+  height: 14px;
+  width: 14px;
+}
+
+.signal-label {
+  bottom: 8%;
+  color: #718079;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.16em;
+  line-height: 1.6;
+  position: absolute;
+  right: 5%;
+}
+
+.metrics {
+  border-top: 1px solid #d6d0c3;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  padding: 28px 9vw 40px;
+}
+
+.metrics div {
+  border-right: 1px solid #d6d0c3;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 0 24px;
+}
+
+.metrics div:first-child { padding-left: 0; }
+.metrics div:last-child { border-right: 0; }
+.metrics span {
+  color: #8b958c;
+  font-family: var(--mono);
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.metrics strong {
+  color: #18211f;
+  font-family: var(--mono);
+  font-size: 14px;
+  font-weight: 500;
+}
+
+@media (max-width: 720px) {
+  .topbar { padding: 18px 24px; }
+  .hero-panel {
+    grid-template-columns: 1fr;
+    min-height: auto;
+    padding: 72px 24px 48px;
+  }
+  .signal-art {
+    height: 280px;
+    margin: 56px auto 0;
+    width: 280px;
+  }
+  .metrics {
+    gap: 24px;
+    grid-template-columns: 1fr;
+    padding: 28px 24px 40px;
+  }
+  .metrics div, .metrics div:first-child {
+    border-bottom: 1px solid #d6d0c3;
+    border-right: 0;
+    padding: 0 0 20px;
+  }
+  .metrics div:last-child { border-bottom: 0; padding-bottom: 0; }
+}
