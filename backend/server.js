@@ -3,7 +3,6 @@ const express = require('express')
 const { WebSocket, WebSocketServer } = require('ws')
 
 const port = Number(process.env.PORT || 3000)
-const audioSourceUrl = process.env.AUDIO_SOURCE_URL || ''
 const allowedOrigin = process.env.ALLOWED_ORIGIN || '*'
 
 const app = express()
@@ -12,7 +11,6 @@ const browserClients = new Set()
 const webSocketServer = new WebSocketServer({ noServer: true })
 
 let audioSource = null
-let reconnectTimer = null
 
 app.get('/health', (_request, response) => {
   response.json({
@@ -34,45 +32,9 @@ function broadcastAudio(chunk) {
   }
 }
 
-function connectToAudioSource() {
-  if (!audioSourceUrl) {
-    console.log('AUDIO_SOURCE_URL is not configured; relay is waiting for an audio source')
-    return
-  }
-
-  if (audioSource && audioSource.readyState !== WebSocket.CLOSED) {
-    return
-  }
-
-  audioSource = new WebSocket(audioSourceUrl)
-
-  audioSource.on('open', () => {
-    console.log(`Connected to audio source: ${audioSourceUrl}`)
-  })
-
-  audioSource.on('message', (data, isBinary) => {
-    if (isBinary || Buffer.isBuffer(data)) {
-      broadcastAudio(data)
-    }
-  })
-
-  audioSource.on('error', (error) => {
-    console.error(`Audio source error: ${error.message}`)
-  })
-
-  audioSource.on('close', () => {
-    audioSource = null
-    if (reconnectTimer === null) {
-      reconnectTimer = setTimeout(() => {
-        reconnectTimer = null
-        connectToAudioSource()
-      }, 2000)
-    }
-  })
-}
-
 server.on('upgrade', (request, socket, head) => {
-  if (request.url !== '/audio' || !originAllowed(request)) {
+  if (!['/audio', '/source'].includes(request.url) ||
+      (request.url === '/audio' && !originAllowed(request))) {
     socket.write('HTTP/1.1 403 Forbidden\r\n\r\n')
     socket.destroy()
     return
@@ -83,7 +45,27 @@ server.on('upgrade', (request, socket, head) => {
   })
 })
 
-webSocketServer.on('connection', (client) => {
+webSocketServer.on('connection', (client, request) => {
+  if (request.url === '/source') {
+    audioSource?.close()
+    audioSource = client
+    console.log('C++ audio engine connected')
+
+    client.on('message', (data, isBinary) => {
+      if (isBinary || Buffer.isBuffer(data)) {
+        broadcastAudio(data)
+      }
+    })
+
+    client.on('close', () => {
+      if (audioSource === client) {
+        audioSource = null
+      }
+      console.log('C++ audio engine disconnected')
+    })
+    return
+  }
+
   browserClients.add(client)
   console.log(`Browser audio client connected (${browserClients.size})`)
 
@@ -99,13 +81,11 @@ webSocketServer.on('connection', (client) => {
 
 server.listen(port, '0.0.0.0', () => {
   console.log(`Audio relay listening on port ${port}`)
-  console.log(`WebSocket endpoint: ws://0.0.0.0:${port}/audio`)
-  console.log(`Audio source: ${audioSourceUrl || 'not configured'}`)
-  connectToAudioSource()
+  console.log(`Browser WebSocket endpoint: ws://0.0.0.0:${port}/audio`)
+  console.log(`Engine WebSocket endpoint: ws://0.0.0.0:${port}/source`)
 })
 
 function shutdown() {
-  clearTimeout(reconnectTimer)
   audioSource?.close()
   for (const client of browserClients) {
     client.close()
